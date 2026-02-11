@@ -3,6 +3,9 @@ title: Skills
 description: Learn how to extend your deep agent's capabilities with skills
 ---
 
+import SkillsUsageTabsPy from '/snippets/skills-usage-tabs-py.mdx';
+import SkillsUsageTabsJs from '/snippets/skills-usage-tabs-js.mdx';
+
 Skills are reusable agent capabilities that provide specialized workflows and domain knowledge.
 
 You can use [Agent Skills](https://agentskills.io/) to provide your deep agent with new capabilities and expertise.
@@ -154,123 +157,14 @@ After reading the documentation, complete the user's request.
 
 Pass the skills directory when creating your deep agent:
 
-<Tabs>
-  <Tab title="StateBackend">
-    ```python
-    from urllib.request import urlopen
-    from deepagents import create_deep_agent
-    from langgraph.checkpoint.memory import MemorySaver
-
-    checkpointer = MemorySaver()
-
-    skill_url = "https://raw.githubusercontent.com/langchain-ai/deepagents/refs/heads/main/libs/cli/examples/skills/langgraph-docs/SKILL.md"
-    with urlopen(skill_url) as response:
-        skill_content = response.read().decode('utf-8')
-
-    skills_files = {
-        "/skills/langgraph-docs/SKILL.md": skill_content
-    }
-
-    agent = create_deep_agent(
-        skills=["./skills/"],
-        checkpointer=checkpointer,
-    )
-
-    result = agent.invoke(
-        {
-            "messages": [
-                {
-                    "role": "user",
-                    "content": "What is langgraph?",
-                }
-            ],
-            # Seed the default StateBackend's in-state filesystem (virtual paths must start with "/").
-            "files": skills_files
-        },
-        config={"configurable": {"thread_id": "12345"}},
-    )
-    ```
-  </Tab>
-  <Tab title="StoreBackend">
-    ```python
-    from urllib.request import urlopen
-    from deepagents import create_deep_agent
-    from deepagents.backends import StoreBackend
-    from langgraph.store.memory import InMemoryStore
-
-
-    store = InMemoryStore()
-
-    skill_url = "https://raw.githubusercontent.com/langchain-ai/deepagents/refs/heads/main/libs/cli/examples/skills/langgraph-docs/SKILL.md"
-    with urlopen(skill_url) as response:
-        skill_content = response.read().decode('utf-8')
-
-    store.put(
-        namespace=("filesystem",),
-        key="/skills/langgraph-docs/SKILL.md",
-        value=skill_content
-    )
-
-    agent = create_deep_agent(
-        backend=(lambda rt: StoreBackend(rt)),
-        store=store,
-        skills=["./skills/"]
-    )
-
-    result = agent.invoke(
-        {
-            "messages": [
-                {
-                    "role": "user",
-                    "content": "What is langgraph?",
-                }
-            ]
-        },
-        config={"configurable": {"thread_id": "12345"}},
-    )
-    ```
-  </Tab>
-  <Tab title="FilesystemBackend">
-    ```python
-    from deepagents import create_deep_agent
-    from langgraph.checkpoint.memory import MemorySaver
-    from deepagents.backends.filesystem import FilesystemBackend
-
-    # Checkpointer is REQUIRED for human-in-the-loop
-    checkpointer = MemorySaver()
-
-    agent = create_deep_agent(
-        backend=FilesystemBackend(root_dir="/Users/user/{project}"),
-        skills=["/Users/user/{project}/skills/"],
-        interrupt_on={
-            "write_file": True,  # Default: approve, edit, reject
-            "read_file": False,  # No interrupts needed
-            "edit_file": True    # Default: approve, edit, reject
-        },
-        checkpointer=checkpointer,  # Required!
-    )
-
-    result = agent.invoke(
-        {
-            "messages": [
-                {
-                    "role": "user",
-                    "content": "What is langgraph?",
-                }
-            ]
-        },
-        config={"configurable": {"thread_id": "12345"}},
-    )
-    ```
-  </Tab>
-</Tabs>
+<SkillsUsageTabsPy />
 
 <ParamField body="skills" type="list[str]" optional>
     List of skill source paths.
 
     Paths must be specified using forward slashes and are relative to the backend's root.
 
-    - When using `StateBackend` (default), provide skill files with `invoke(files={...})`.
+    - When using `StateBackend` (default), provide skill files with `invoke(files={...})`. Use `create_file_data()` from `deepagents.backends.utils` to format file contents; raw strings are not supported.
     - With `FilesystemBackend`, skills are loaded from disk relative to the backend's `root_dir`.
 
     Later sources override earlier ones for skills with the same name (last one wins).

@@ -1,0 +1,39 @@
+---
+title: "Weather integrations"
+description: "Integrate with Weather using LangChain Python."
+---
+
+>[OpenWeatherMap](https://openweathermap.org/) is an open-source weather service provider.
+
+
+
+## Installation and setup
+
+<CodeGroup>
+```bash pip
+pip install pyowm
+```
+
+```bash uv
+uv add pyowm
+```
+</CodeGroup>
+
+We must set up the `OpenWeatherMap API token`.
+
+## Document loader
+
+See a [usage example](/oss/python/integrations/document_loaders/weather).
+
+```python
+from langchain_community.document_loaders import WeatherDataLoader
+```
+
+---
+
+<Callout icon="pen-to-square" iconType="regular">
+    [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/python/integrations/providers/weather.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose).
+</Callout>
+<Tip icon="terminal" iconType="regular">
+    [Connect these docs](/use-these-docs) to Claude, VSCode, and more via MCP for real-time answers.
+</Tip>

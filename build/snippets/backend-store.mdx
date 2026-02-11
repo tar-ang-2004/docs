@@ -1,0 +1,12 @@
+```python
+from langgraph.store.memory import InMemoryStore
+from deepagents.backends import StoreBackend
+
+agent = create_deep_agent(
+    backend=(lambda rt: StoreBackend(rt)),   # Note that the tools access Store through the runtime.store
+    store=InMemoryStore()
+)
+```
+
+
+
